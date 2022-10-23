@@ -1,0 +1,12 @@
+[package]
+name = "am2320-homekit"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+am2320 = "0.2.0"
+env_logger = "0.9.1"
+hap = "0.1.0-pre.15"
+tokio = { version="1.21.2", features=["full"] }
