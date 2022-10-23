@@ -2,6 +2,7 @@ use tokio;
 
 use hap::{
     accessory::{temperature_sensor::TemperatureSensorAccessory, AccessoryCategory, AccessoryInformation},
+    service::temperature_sensor::TemperatureSensorService,
     server::{IpServer, Server},
     storage::{FileStorage, Storage},
     Config,
@@ -12,10 +13,12 @@ use hap::{
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let temperature_sensor = TemperatureSensorAccessory::new(1, AccessoryInformation {
-        name: "Acme Temperature Sensor".into(),
+    let mut temperature_sensor = TemperatureSensorAccessory::new(1, AccessoryInformation {
+        name: "Pi Temperature Sensor".into(),
         ..Default::default()
     })?;
+    let temperature_service = TemperatureSensorService::new(1, 1);
+    temperature_sensor.temperature_sensor = temperature_service;
 
     let mut storage = FileStorage::current_dir().await?;
 
@@ -28,7 +31,7 @@ async fn main() -> Result<()> {
         Err(_) => {
             let config = Config {
                 pin: Pin::new([1, 1, 1, 2, 2, 3, 3, 3])?,
-                name: "Acme Temperature Sensor".into(),
+                name: "Pi Temperature Sensor".into(),
                 device_id: MacAddress::new([10, 20, 30, 40, 50, 60]),
                 category: AccessoryCategory::Sensor,
                 ..Default::default()
