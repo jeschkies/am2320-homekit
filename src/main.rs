@@ -1,4 +1,4 @@
-use am2320::{Am2320, Error};
+use am2320::Am2320;
 use hap::{
     accessory::{
         temperature_sensor::TemperatureSensorAccessory, AccessoryCategory, AccessoryInformation,
@@ -12,6 +12,7 @@ use hap::{
     Config, MacAddress, Pin, Result,
 };
 use rppal::{hal::Delay, i2c::I2c};
+use std::sync::Arc;
 use tokio;
 
 #[tokio::main]
@@ -20,7 +21,7 @@ async fn main() -> Result<()> {
     let device = I2c::new().expect("could not initialize I2c on your RPi");
     let delay = Delay::new();
 
-    let mut am2320 = Am2320::new(device, delay);
+    let mut am2320 = Arc::new(Am2320::new(device, delay));
 
     // HomeKit
     let mut temperature_sensor = TemperatureSensorAccessory::new(
@@ -33,7 +34,7 @@ async fn main() -> Result<()> {
     let mut temperature_service = TemperatureSensorService::new(1, 1);
     let mut current_temperature = CurrentTemperatureCharacteristic::new(1, 1);
     current_temperature.on_read(Some(|| {
-        let measurement = am2320.read()?;
+        let measurement = am2320.clone().read().unwrap(); // TODO: use ? and thiserror.
         Ok(Some(measurement.temperature))
     }));
 
