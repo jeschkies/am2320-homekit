@@ -9,5 +9,6 @@ edition = "2021"
 am2320 = "0.2.0"
 env_logger = "0.9.1"
 hap = "0.1.0-pre.15"
+mac_address = "1.1.4"
 rppal = { version = "0.13", features = ["hal"] }
 tokio = { version="1.21.2", features=["full"] }

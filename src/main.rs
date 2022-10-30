@@ -11,6 +11,7 @@ use hap::{
     storage::{FileStorage, Storage},
     Config, MacAddress, Pin, Result,
 };
+use mac_address;
 use rppal::{hal::Delay, i2c::I2c};
 use tokio;
 
@@ -48,10 +49,14 @@ async fn main() -> Result<()> {
             config
         }
         Err(_) => {
+            let address = mac_address::get_mac_address()
+                .unwrap()
+                .map(|a| MacAddress::new(a.bytes()))
+                .unwrap_or(MacAddress::new([10, 20, 30, 40, 50, 60]));
             let config = Config {
                 pin: Pin::new([1, 1, 1, 2, 2, 3, 3, 3])?,
                 name: "Pi Temperature Sensor".into(),
-                device_id: MacAddress::new([10, 20, 30, 40, 50, 60]),
+                device_id: address,
                 category: AccessoryCategory::Sensor,
                 ..Default::default()
             };
