@@ -11,9 +11,7 @@ use hap::{
     storage::{FileStorage, Storage},
     Config, MacAddress, Pin, Result,
 };
-use mac_address;
 use rppal::{hal::Delay, i2c::I2c};
-use tokio;
 
 #[tokio::main]
 async fn main() -> Result<()> {
