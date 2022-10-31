@@ -16,6 +16,10 @@ use rppal::{hal::Delay, i2c::I2c};
 
 #[tokio::main]
 async fn main() -> Result<()> {
+
+    std::env::set_var("RUST_LOG", "hap=debug");
+    env_logger::init();
+
     // HomeKit
     let mut temperature_sensor = TemperatureSensorAccessory::new(
         1,
@@ -43,6 +47,8 @@ async fn main() -> Result<()> {
 
     let config = match storage.load_config().await {
         Ok(mut config) => {
+            info!("Use existing configuration.");
+
             config.redetermine_local_ip();
             storage.save_config(&config).await?;
             config
@@ -71,9 +77,6 @@ async fn main() -> Result<()> {
     server.add_accessory(temperature_sensor).await?;
 
     let handle = server.run_handle();
-
-    std::env::set_var("RUST_LOG", "hap=debug");
-    env_logger::init();
 
     handle.await
 }
